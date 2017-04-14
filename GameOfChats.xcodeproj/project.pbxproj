@@ -11,6 +11,7 @@
 		CE5A63731E8403EB00FC2A0C /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5A63721E8403EB00FC2A0C /* Extensions.swift */; };
 		CE6445071E96B8540046B753 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6445061E96B8540046B753 /* Message.swift */; };
 		CE64450A1E980BF60046B753 /* UserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6445091E980BF60046B753 /* UserCell.swift */; };
+		CE64450C1EA1725C0046B753 /* ChatMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE64450B1EA1725C0046B753 /* ChatMessageCell.swift */; };
 		CE9108511E8D49A600E43D25 /* ChatLogController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9108501E8D49A600E43D25 /* ChatLogController.swift */; };
 		CEC8DD441E719E9000A8F7BB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC8DD431E719E9000A8F7BB /* AppDelegate.swift */; };
 		CEC8DD461E719E9000A8F7BB /* MessagesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC8DD451E719E9000A8F7BB /* MessagesController.swift */; };
@@ -31,6 +32,7 @@
 		CE5A63721E8403EB00FC2A0C /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		CE6445061E96B8540046B753 /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		CE6445091E980BF60046B753 /* UserCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserCell.swift; sourceTree = "<group>"; };
+		CE64450B1EA1725C0046B753 /* ChatMessageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMessageCell.swift; sourceTree = "<group>"; };
 		CE9108501E8D49A600E43D25 /* ChatLogController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatLogController.swift; sourceTree = "<group>"; };
 		CEC8DD401E719E9000A8F7BB /* GameOfChats.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GameOfChats.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CEC8DD431E719E9000A8F7BB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -79,6 +81,7 @@
 			isa = PBXGroup;
 			children = (
 				CE6445091E980BF60046B753 /* UserCell.swift */,
+				CE64450B1EA1725C0046B753 /* ChatMessageCell.swift */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -279,6 +282,7 @@
 				CEF9A7D21E82C60600E89731 /* LoginController+handlers.swift in Sources */,
 				CEC8DD571E71D92800A8F7BB /* LoginController.swift in Sources */,
 				CEF9A7D01E81A8B600E89731 /* User.swift in Sources */,
+				CE64450C1EA1725C0046B753 /* ChatMessageCell.swift in Sources */,
 				CEC8DD441E719E9000A8F7BB /* AppDelegate.swift in Sources */,
 				CE64450A1E980BF60046B753 /* UserCell.swift in Sources */,
 				CE5A63731E8403EB00FC2A0C /* Extensions.swift in Sources */,
