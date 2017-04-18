@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 
-class ChatLogController: UICollectionViewController{
+class ChatLogController: UICollectionViewController, UICollectionViewDelegateFlowLayout{
     
     var user : User?{
         didSet{
@@ -30,6 +30,12 @@ class ChatLogController: UICollectionViewController{
         textField.delegate = self
         return textField
     }()
+    
+    private func estimateFrameForText(text: String) -> CGRect {
+        let size = CGSize(width: 200, height: 1000)
+        let options = NSStringDrawingOptions.usesFontLeading.union(.usesLineFragmentOrigin)
+        return NSString(string: text).boundingRect(with: size, options: options, attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 16)], context: nil)
+    }
     
     func observeMessages() {
         guard let uid = FIRAuth.auth()?.currentUser?.uid else {
@@ -69,12 +75,18 @@ class ChatLogController: UICollectionViewController{
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        collectionView?.contentInset = UIEdgeInsetsMake(8, 0, 58, 0)
+        collectionView?.scrollIndicatorInsets = UIEdgeInsetsMake(8, 0, 50, 0)
         collectionView?.alwaysBounceVertical = true
         collectionView?.backgroundColor = UIColor.white
         collectionView?.register(ChatMessageCell.self, forCellWithReuseIdentifier: cellId)
         
-        
         setupInputComponents()
+    }
+    
+    // Função: Readaptar os messages mesmo mundando de angulo
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        collectionView?.collectionViewLayout.invalidateLayout()
     }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -87,7 +99,22 @@ class ChatLogController: UICollectionViewController{
         let message = messages[indexPath.item]
         cell.textView.text = message.text
         
+        // lets modify the bubbleView's width somehow??
+        cell.bubbleWidthAnchor?.constant = estimateFrameForText(text: message.text!).width + 32
+        
         return cell
+    }
+    
+    // Função que pertence ao: UICollectionViewDelegateFlowLayout
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        var height : CGFloat = 80
+        // get estimated height somehow??
+        if let text = messages[indexPath.item].text {
+            height = estimateFrameForText(text: text).height + 20
+        }
+        
+        
+        return CGSize(width: view.frame.width, height: height)
     }
     
     func setupInputComponents() {
@@ -162,6 +189,8 @@ class ChatLogController: UICollectionViewController{
                 return
             }
             
+            self.inputTextField.text = nil
+            
             let userMessagesRef = FIRDatabase.database().reference().child("user-messages").child(fromId)
             
             let messageId = childRef.key
@@ -180,10 +209,3 @@ extension ChatLogController: UITextFieldDelegate {
     }
 }
 
-extension ChatLogController: UICollectionViewDelegateFlowLayout {
-
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: view.frame.width, height: 80)
-    }
-    
-}

@@ -55,8 +55,8 @@ class MessagesController: UITableViewController {
                     let message = Message()
                     message.setValuesForKeys(dictionary)
                     
-                    if let toId = message.toId {
-                        self.messagesDictionary[toId] = message
+                    if let chatPartnerId = message.chatPartnerId() {
+                        self.messagesDictionary[chatPartnerId] = message
                         
                         self.messages = Array(self.messagesDictionary.values)
                         
@@ -127,7 +127,7 @@ class MessagesController: UITableViewController {
         
         let message = messages[indexPath.row]
         
-        guard let chatPartnerId: String = message.chatPartnerId() else {
+        guard let chatPartnerId = message.chatPartnerId() else {
             return
         }
         
