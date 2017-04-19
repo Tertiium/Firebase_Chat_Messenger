@@ -17,6 +17,7 @@ class MessagesController: UITableViewController {
     
     var messages = [Message]()
     var messagesDictionary = [String: Message]()
+    var timer : Timer?
     
     // MARK: - Life Cycles
     override func viewDidLoad() {
@@ -65,44 +66,54 @@ class MessagesController: UITableViewController {
                         })
                     }
                     
-                    // this will crash because of background thread, so lets call this on dispatch_asyns main thread
-                    DispatchQueue.main.async {
-                        self.tableView.reloadData()
-                    }
-                    
+                    self.timer?.invalidate()
+                    print("we just canceled our timer")
+                    self.timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(self.handleReloadTable), userInfo: nil, repeats: false)
+                    print("schedule a table reload in 0.1 sec")
                 }
                 
             }, withCancel: nil)
         }, withCancel: nil)
     }
     
-    func observerMessages() {
-        let ref = FIRDatabase.database().reference().child("messages")
-        ref.observe(.childAdded, with: { (snapshot) in
-            
-            if let dictionary = snapshot.value as? [String: AnyObject] {
-                let message = Message()
-                message.setValuesForKeys(dictionary)
-                
-                if let toId = message.toId {
-                    self.messagesDictionary[toId] = message
-                    
-                    self.messages = Array(self.messagesDictionary.values)
-                    
-                    self.messages.sort(by: { (message1, message2) -> Bool in
-                        return (message1.timestamp?.intValue)! > (message2.timestamp?.intValue)!
-                    })
-                }
-                
-                // this will crash because of background thread, so lets call this on dispatch_asyns main thread
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                }
-                
-            }
-            
-        }, withCancel: nil)
+    func handleReloadTable() {
+        
+        // this will crash because of background thread, so lets call this on dispatch_asyns main thread
+        DispatchQueue.main.async {
+            print("we reloaded the table!")
+            self.tableView.reloadData()
+        }
+        
     }
+    
+//    func observerMessages() {
+//        let ref = FIRDatabase.database().reference().child("messages")
+//        ref.observe(.childAdded, with: { (snapshot) in
+//            
+//            if let dictionary = snapshot.value as? [String: AnyObject] {
+//                let message = Message()
+//                message.setValuesForKeys(dictionary)
+//                
+//                if let toId = message.toId {
+//                    self.messagesDictionary[toId] = message
+//                    
+//                    self.messages = Array(self.messagesDictionary.values)
+//                    
+//                    self.messages.sort(by: { (message1, message2) -> Bool in
+//                        return (message1.timestamp?.intValue)! > (message2.timestamp?.intValue)!
+//                    })
+//                }
+//                
+//                // this will crash because of background thread, so lets call this on dispatch_asyns main thread
+//                DispatchQueue.main.async {
+//                    print("we reloaded the table!")
+//                    self.tableView.reloadData()
+//                }
+//                
+//            }
+//            
+//        }, withCancel: nil)
+//    }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
          return messages.count
@@ -135,7 +146,7 @@ class MessagesController: UITableViewController {
         
         ref.observeSingleEvent(of: .value, with: { (snapshot) in
             
-            print(snapshot)
+            //print(snapshot)
             
             guard let dictionary = snapshot.value as? [String: AnyObject] else{
                 return
