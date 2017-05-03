@@ -67,9 +67,9 @@ class MessagesController: UITableViewController {
                     }
                     
                     self.timer?.invalidate()
-                    print("we just canceled our timer")
+                    //print("we just canceled our timer")
                     self.timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(self.handleReloadTable), userInfo: nil, repeats: false)
-                    print("schedule a table reload in 0.1 sec")
+                    //print("schedule a table reload in 0.1 sec")
                 }
                 
             }, withCancel: nil)
@@ -80,7 +80,7 @@ class MessagesController: UITableViewController {
         
         // this will crash because of background thread, so lets call this on dispatch_asyns main thread
         DispatchQueue.main.async {
-            print("we reloaded the table!")
+            //print("we reloaded the table!")
             self.tableView.reloadData()
         }
         
