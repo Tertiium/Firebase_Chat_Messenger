@@ -54,15 +54,14 @@ class ChatLogController: UICollectionViewController, UICollectionViewDelegateFlo
                     return
                 }
                 
-                let message = Message()
-                // Potential of crashing if keys don't match
-                message.setValuesForKeys(dictionary)
-                
                 // Do we need to attempt filtering anymore?
-                self.messages.append(message)
+                self.messages.append(Message(dictionary: dictionary))
                 
                 DispatchQueue.main.async {
                     self.collectionView?.reloadData()
+                    // scroll to the last index
+                    let indexPath = NSIndexPath(item: self.messages.count-1, section: 0)
+                    self.collectionView?.scrollToItem(at: indexPath as IndexPath, at: .bottom, animated: true)
                 }
                 
             }, withCancel: nil)
@@ -80,6 +79,8 @@ class ChatLogController: UICollectionViewController, UICollectionViewDelegateFlo
         collectionView?.register(ChatMessageCell.self, forCellWithReuseIdentifier: cellId)
         
         collectionView?.keyboardDismissMode = .interactive
+        
+        self.setupKeyboardObservers()
         
     }
     
@@ -170,6 +171,10 @@ class ChatLogController: UICollectionViewController, UICollectionViewDelegateFlo
         
         if let text = message.text{
             cell.bubbleWidthAnchor?.constant = estimateFrameForText(text: text).width + 32
+        } else if message.imageUrl != nil {
+            // fall in here if its an image message
+            
+            cell.bubbleWidthAnchor?.constant = 200
         }
         
         return cell
@@ -211,9 +216,18 @@ class ChatLogController: UICollectionViewController, UICollectionViewDelegateFlo
     // Função que pertence ao: UICollectionViewDelegateFlowLayout
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         var height : CGFloat = 80
-        // get estimated height somehow??
-        if let text = messages[indexPath.item].text {
+        
+        let message = messages[indexPath.item]
+        if let text = message.text {
             height = estimateFrameForText(text: text).height + 20
+        } else if let imageWidth = message.imageWidth?.floatValue, let imageHeight = message.imageHeight?.floatValue {
+            
+            // h1 / w1 = h2 / w2
+            // solve for h1
+            // h1 = h2 / w2 * w1
+            
+            height = CGFloat(imageHeight / imageWidth * 200)
+            
         }
         
         let width = UIScreen.main.bounds.width
@@ -262,41 +276,12 @@ class ChatLogController: UICollectionViewController, UICollectionViewDelegateFlo
                 }
                 
                 if let imageUrl = metadata?.downloadURL()?.absoluteString {
-                    self.sendMessageWithImageUrl(imageUrl: imageUrl)
+                    self.sendMessageWithImageUrl(imageUrl: imageUrl,image: image)
                 }
                 
-                print(metadata?.downloadURL()?.absoluteString)
+                print(metadata?.downloadURL()?.absoluteString ?? "")
                 
             })
-        }
-    }
-    
-    private func sendMessageWithImageUrl(imageUrl: String) {
-        let ref = FIRDatabase.database().reference().child("messages")
-        let childRef =  ref.childByAutoId()
-        // is it there best thing to include the name insideof the message node
-        let toId = user!.id!
-        let fromId = FIRAuth.auth()!.currentUser!.uid
-        let timestamp = NSDate().timeIntervalSince1970
-        
-        let values = ["imageUrl": imageUrl, "toId": toId, "fromId": fromId, "timestamp": timestamp] as [String : Any]
-        
-        childRef.updateChildValues(values) { (error, ref) in
-            
-            if error != nil {
-                print(error!)
-                return
-            }
-            
-            self.inputTextField.text = nil
-            
-            let userMessagesRef = FIRDatabase.database().reference().child("user-messages").child(fromId).child(toId)
-            
-            let messageId = childRef.key
-            userMessagesRef.updateChildValues([messageId: 1])
-            
-            let recipientUserMessagesRef = FIRDatabase.database().reference().child("user-messages").child(toId).child(fromId)
-            recipientUserMessagesRef.updateChildValues([messageId: 1])
         }
     }
     
@@ -305,9 +290,18 @@ class ChatLogController: UICollectionViewController, UICollectionViewDelegateFlo
     }
     
     func setupKeyboardObservers() {
-        NotificationCenter.default.addObserver(self , selector: #selector(handleKeyboardWillShow), name: .UIKeyboardWillShow , object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardDidShow), name: .UIKeyboardDidShow, object: nil)
         
-        NotificationCenter.default.addObserver(self , selector: #selector(handleKeyboardWillHide), name: .UIKeyboardWillHide , object: nil)
+//        NotificationCenter.default.addObserver(self , selector: #selector(handleKeyboardWillShow), name: .UIKeyboardWillShow , object: nil)
+//        
+//        NotificationCenter.default.addObserver(self , selector: #selector(handleKeyboardWillHide), name: .UIKeyboardWillHide , object: nil)
+    }
+    
+    func handleKeyboardDidShow(){
+        if messages.count > 0{
+            let indexPath = NSIndexPath(item: messages.count-1, section: 0)
+            collectionView?.scrollToItem(at: indexPath as IndexPath, at: .top, animated: true)
+        }
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -343,16 +337,31 @@ class ChatLogController: UICollectionViewController, UICollectionViewDelegateFlo
     
     var containerViewBottomAnchor: NSLayoutConstraint?
     
-    
     func handleSend() {
         
+        let properties: [String: AnyObject] = ["text": inputTextField.text! as AnyObject]
+        sendMessageWithProperties(properties: properties)
+    }
+    
+    private func sendMessageWithImageUrl(imageUrl: String, image: UIImage) {
+        let properties: [String: AnyObject] = ["imageUrl": imageUrl, "imageWidth": image.size.width, "imageHeight": image.size.height] as [String: AnyObject]
+        
+        sendMessageWithProperties(properties: properties)
+    }
+    
+    private func sendMessageWithProperties(properties: [String: AnyObject]) {
         let ref = FIRDatabase.database().reference().child("messages")
         let childRef =  ref.childByAutoId()
         // is it there best thing to include the name insideof the message node
         let toId = user!.id!
         let fromId = FIRAuth.auth()!.currentUser!.uid
         let timestamp = NSDate().timeIntervalSince1970
-        let values = ["text": inputTextField.text!, "toId": toId, "fromId": fromId, "timestamp": timestamp] as [String : Any]
+        
+        var values = ["toId": toId, "fromId": fromId, "timestamp": timestamp] as [String : Any]
+        
+        // append properties dictionary onto values somehow??
+        // key $0, value $1
+        properties.forEach({values[$0] = $1})
         
         childRef.updateChildValues(values) { (error, ref) in
             
@@ -372,6 +381,7 @@ class ChatLogController: UICollectionViewController, UICollectionViewDelegateFlo
             recipientUserMessagesRef.updateChildValues([messageId: 1])
         }
     }
+    
 }
 
 extension ChatLogController: UITextFieldDelegate {
