@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		B29C6B4D50F280CE0C9AAFDB /* Pods_GameOfChats.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DB249E99B7198CB4E1C0E3F /* Pods_GameOfChats.framework */; };
+		CE2EEC431F01BE7600B9178A /* ChatInputContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2EEC421F01BE7600B9178A /* ChatInputContainerView.swift */; };
 		CE5A63731E8403EB00FC2A0C /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5A63721E8403EB00FC2A0C /* Extensions.swift */; };
 		CE6445071E96B8540046B753 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6445061E96B8540046B753 /* Message.swift */; };
 		CE64450A1E980BF60046B753 /* UserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6445091E980BF60046B753 /* UserCell.swift */; };
@@ -29,6 +30,7 @@
 		0DF4D1090D0DFDA9190FBC47 /* Pods-GameOfChats.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GameOfChats.release.xcconfig"; path = "Pods/Target Support Files/Pods-GameOfChats/Pods-GameOfChats.release.xcconfig"; sourceTree = "<group>"; };
 		2DB249E99B7198CB4E1C0E3F /* Pods_GameOfChats.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_GameOfChats.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BD1885ABAE3662131CD96AFC /* Pods-GameOfChats.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GameOfChats.debug.xcconfig"; path = "Pods/Target Support Files/Pods-GameOfChats/Pods-GameOfChats.debug.xcconfig"; sourceTree = "<group>"; };
+		CE2EEC421F01BE7600B9178A /* ChatInputContainerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatInputContainerView.swift; sourceTree = "<group>"; };
 		CE5A63721E8403EB00FC2A0C /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		CE6445061E96B8540046B753 /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		CE6445091E980BF60046B753 /* UserCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserCell.swift; sourceTree = "<group>"; };
@@ -82,6 +84,7 @@
 			children = (
 				CE6445091E980BF60046B753 /* UserCell.swift */,
 				CE64450B1EA1725C0046B753 /* ChatMessageCell.swift */,
+				CE2EEC421F01BE7600B9178A /* ChatInputContainerView.swift */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -276,6 +279,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CE9108511E8D49A600E43D25 /* ChatLogController.swift in Sources */,
+				CE2EEC431F01BE7600B9178A /* ChatInputContainerView.swift in Sources */,
 				CEF9A7CD1E8167DE00E89731 /* NewMessageController.swift in Sources */,
 				CEC8DD461E719E9000A8F7BB /* MessagesController.swift in Sources */,
 				CE6445071E96B8540046B753 /* Message.swift in Sources */,
