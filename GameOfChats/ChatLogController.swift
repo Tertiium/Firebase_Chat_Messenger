@@ -353,9 +353,14 @@ class ChatLogController: UICollectionViewController, UICollectionViewDelegateFlo
     var containerViewBottomAnchor: NSLayoutConstraint?
     
     func handleSend() {
+        if let text = inputContainerView.inputTextField.text, !text.isEmpty {
+            print("TEXTO:\(text):")
+            let properties: [String: AnyObject] = ["text": text as AnyObject]
+            sendMessageWithProperties(properties: properties)
+        }
         
-        let properties: [String: AnyObject] = ["text": inputContainerView.inputTextField.text! as AnyObject]
-        sendMessageWithProperties(properties: properties)
+//        let properties: [String: AnyObject] = ["text": inputContainerView.inputTextField.text! as AnyObject]
+//        sendMessageWithProperties(properties: properties)
     }
     
     private func sendMessageWithImageUrl(imageUrl: String, image: UIImage) {
